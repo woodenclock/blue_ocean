@@ -1,0 +1,60 @@
+---
+description: Multi-repo commit plans — top-level number per repo, sub-commits by robot
+alwaysApply: true
+---
+
+# Plan commit for all
+
+When the user asks to **plan commit for all** (or similar), scope is **every git repo in this stack**, not only the root:
+
+| # | Repo path | Package |
+|---|-----------|---------|
+| 1 | `src/vda5050_core_gametl` | spellbooks, VDA5050 master, adapter |
+| 2 | `src/rmf2_scheduler_gametl` | scheduler / demo_routes |
+| 3 | `src/rmf2-ui-gametl` | dashboard |
+| 4 | `.` (`rmf2-blue-ocean-stack`) | maps, compose, docs |
+| 5 | `src/rmf2_map_server` | map server |
+| 6 | `src/rmf2_task_orchestrator_gametl` | orchestrator |
+| 7 | `src/res_mapf_gametl` | MAPF |
+
+Run `git status` / `git diff` in **each** repo. List repos with **no changes** explicitly (still give them a number, mark **clean**).
+
+## Numbering (required in the plan)
+
+**Top-level number = repo.** Use **`X.1`, `X.2`, …` for sub-commits inside that repo**, grouped by **robot** (`robot_id` from `maps/<VDA5050_MAP_ID>/robots.yaml`) or **shared** for cross-robot / floor / infra work:
+
+```markdown
+## 1. `src/vda5050_core_gametl`
+### 1.1 autoxing-1 — feat(autoxing): …
+| Path | Action |
+…
+### 1.2 reeman-2-blue — feat(reeman): …
+### 1.3 shared — fix(vda5050): …
+
+## 2. `src/rmf2_scheduler_gametl`
+### 2.1 reeman-2-blue — feat(demo): …
+
+## 4. `rmf2-blue-ocean-stack`
+### 4.1 shared — chore(compose): …
+### 4.2 shared — docs: …
+```
+
+- Put each sub-commit's **Files affected** table directly under its `X.Y` heading.
+- Still follow [plan-format.mdc](plan-format.mdc): files table before scope/overview **within each section**.
+- Apply **Default exclusions** below; ask about any other paths to skip (`Archive.zip`, secrets) before staging.
+- Do **not** commit unless the user explicitly asks; planning only unless they say to execute.
+
+## Default exclusions (never stage or commit)
+
+Always omit these from commit plans and from `git add` / execution unless the user **explicitly** overrides for a specific path:
+
+| Path | Reason |
+|------|--------|
+| `maps/AMAV-X/real.layout.lif.json` | Local LIF editor / VDA-sync artifact — keep working copy only; do not land in git |
+| `todo.md` | Scratch notes (also in root `.gitignore`) |
+
+When `maps/AMAV-X/real.layout.lif.json` appears in `git status`, note it as **excluded (local only)** — do not propose a sub-commit for it. If the user asks to discard or `skip-worktree` it, offer those options separately.
+
+## Execution order
+
+Commit **src/** repos first (1 → 2 → 3 → …), **root stack (4) last** so map pins and docs reference landed spellbook code.

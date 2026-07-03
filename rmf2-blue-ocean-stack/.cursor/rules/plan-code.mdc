@@ -1,0 +1,32 @@
+---
+description: Code planning must read this rule and list files affected first
+alwaysApply: true
+---
+
+# Plan code
+
+Before producing any implementation plan for code changes, read this file and
+follow it.
+
+## Files affected first
+
+Every implementation plan must put a **Files affected** section immediately
+after the plan title, before Scope, Overview, Summary, Approach, or any other
+section.
+
+Use this table shape:
+
+| Path | Action |
+|------|--------|
+| `path/to/file` | **Create** / **Edit** / **Delete** / **Read-only** — brief note |
+
+Rules:
+
+- List every file expected to be created, modified, deleted, or inspected as a
+  required read-only input.
+- Use **Create**, **Edit**, **Delete**, or **Read-only** as the action label.
+- If the exact file set is not yet fully known, include a **Likely affected**
+  subsection and state the assumption clearly.
+- For multi-repo plans, repeat the Files affected table inside each repo or
+  sub-commit section.
+- Do not bury file impact under later implementation details.
