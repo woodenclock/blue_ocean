@@ -1,0 +1,21 @@
+services:
+  map-server:
+    build: .
+    ports:
+      - "8008:8008"
+    volumes:
+      # Mount data directory so layouts persist between restarts
+      - ./data:/app/data
+    environment:
+      DATA_DIR: /app/data
+      VDA5050_BASE: http://host.docker.internal:8000
+      # Comma-separated extra CORS origins (e.g. your production dashboard URL)
+      EXTRA_CORS_ORIGINS: ""
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8008/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
